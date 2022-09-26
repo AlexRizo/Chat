@@ -50,6 +50,50 @@ const login = async(req, res = response) => {
 
 }
 
+const register = async(req, res) => {
+    const { nombre, correo, password, rol} = req.body;
+
+    console.log(nombre, correo, password, rol);
+    try {
+      
+        // Verificar si el email existe
+        const usuarioDB = await Usuario.findOne({ correo });
+
+        if ( usuarioDB ) {
+            return res.status(400).json({
+                msg: 'Ya existe una cuenta con este correo'
+            });
+        }
+
+        const data = {
+            nombre,
+            correo,
+            password,
+            rol
+        };
+
+        const usuario = new Usuario(data);
+
+        // Encriptar la contraseña
+        const salt = bcryptjs.genSaltSync();
+        usuario.password = bcryptjs.hashSync( password, salt );
+
+        // Guardar en BD
+        await usuario.save();
+
+        
+        res.json({
+            msgTrue: 'Usuario creado correctamente'
+        })
+
+    } catch (error) {
+        console.log(error)
+        res.status(500).json({
+            msg: 'Hable con el administrador'
+        });
+    }   
+}
+
 
 const googleSignIn = async(req, res = response) => {
     const {id_token} = req.body;
@@ -111,6 +155,7 @@ const renovarToken = async(req, res) => {
 
 export {
     login,
+    register,
     googleSignIn,
     renovarToken
 }

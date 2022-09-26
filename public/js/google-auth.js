@@ -4,18 +4,50 @@ const url = (window.location.hostname.includes('localhost')
 
 const _token = localStorage.getItem('token') || '';
 
-const form = document.querySelector('form');
+const loginForm = document.querySelector('#login-form');
+const registerForm = document.querySelector('#register-form');
 
 if (_token && _token.length > 10) {
     window.location = 'chat.html';
 }
 
-form.addEventListener('submit', ev => {
+registerForm.addEventListener('submit', ev => {
     ev.preventDefault();
 
     const formData = {};
 
-    for(let el of form.elements) {
+    for (let el of registerForm.elements) {
+        if (el.name.length > 0) {
+            formData[el.name] = el.value;
+        }
+    }
+    formData.rol = 'USER_ROLE';
+
+
+    fetch(url + 'register', {
+        method: 'POST',
+        body: JSON.stringify(formData),
+        headers: {'Content-Type': 'application/json'}
+    })
+    .then(resp => resp.json())
+    .then(({msg, msgTrue}) => {
+        if (msg) {
+            return alert(msg);
+        }
+        alert(msgTrue);
+        location.reload();
+    })
+    .catch(err => {
+        console.log(err);
+    })
+})
+
+loginForm.addEventListener('submit', ev => {
+    ev.preventDefault();
+
+    const formData = {};
+
+    for(let el of loginForm.elements) {
         if (el.name.length > 0) {
             formData[el.name] = el.value;
         }
@@ -29,7 +61,7 @@ form.addEventListener('submit', ev => {
     .then(resp => resp.json())
     .then(({msg, token}) => {
         if (msg) {
-            return console.error(msg);
+            return alert(msg);
         }
         localStorage.setItem('token', token);
         window.location = 'chat.html';
