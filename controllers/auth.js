@@ -53,7 +53,6 @@ const login = async(req, res = response) => {
 const register = async(req, res) => {
     const { nombre, correo, password, rol} = req.body;
 
-    console.log(nombre, correo, password, rol);
     try {
       
         // Verificar si el email existe

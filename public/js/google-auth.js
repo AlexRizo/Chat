@@ -23,7 +23,6 @@ registerForm.addEventListener('submit', ev => {
     }
     formData.rol = 'USER_ROLE';
 
-
     fetch(url + 'register', {
         method: 'POST',
         body: JSON.stringify(formData),
